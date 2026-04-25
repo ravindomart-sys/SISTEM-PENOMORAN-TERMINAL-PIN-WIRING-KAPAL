@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal & Wiring Kapal – Rafael Sukirno, CE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0b0f1a;
+  --bg2: #111827;
+  --bg3: #1a2235;
+  --surface: #1e293b;
+  --surface2: #243048;
+  --border: #2a3a55;
+  --cyan: #00d4ff;
+  --cyan2: #00a8cc;
+  --gold: #f0b429;
+  --green: #00e87a;
+  --red: #ff4d6d;
+  --orange: #ff8c42;
+  --text: #e2eaf7;
+  --text2: #8fa3c0;
+  --text3: #4a6080;
+  --glow: 0 0 20px rgba(0,212,255,0.3);
+}
+[data-theme="light"] {
+  --bg: #f0f4f8;
+  --bg2: #e4ecf5;
+  --bg3: #dce6f0;
+  --surface: #ffffff;
+  --surface2: #f0f6ff;
+  --border: #c5d5e8;
+  --text: #0f1e30;
+  --text2: #3a5070;
+  --text3: #7090b0;
+  --glow: 0 0 20px rgba(0,130,180,0.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--cyan2); border-radius: 3px; }
+
+/* ─── NAVBAR ─────────────────────────────────── */
+.navbar {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  background: rgba(11,15,26,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+[data-theme="light"] .navbar { background: rgba(240,244,248,0.95); }
+.nav-brand {
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+}
+.nav-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem; font-weight: 900;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0,212,255,0.5);
+}
+.nav-author { font-size: 0.7rem; color: var(--text2); font-family:'Share Tech Mono'; }
+.nav-links {
+  display: flex; gap: 4px; align-items: center;
+}
+.nav-link {
+  color: var(--text2); text-decoration: none;
+  padding: 8px 12px; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 600;
+  font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-link:hover, .nav-link.active { color: var(--cyan); background: rgba(0,212,255,0.1); }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.theme-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); padding: 8px 12px; border-radius: 8px;
+  cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+}
+.theme-btn:hover { color: var(--gold); border-color: var(--gold); }
+.hamburger {
+  display:none; background:none; border:none;
+  color: var(--text); font-size:1.3rem; cursor:pointer;
+}
+.mobile-menu {
+  display:none; position:fixed; top:64px; left:0; right:0;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 16px; flex-direction:column; gap:4px; z-index:999;
+}
+.mobile-menu.open { display:flex; }
+.mobile-menu .nav-link { width:100%; }
+
+/* ─── MAIN LAYOUT ─────────────────────────────── */
+.main-wrap {
+  padding-top: 64px;
+  display: flex;
+}
+.sidebar {
+  width: 220px; min-height: calc(100vh - 64px);
+  background: var(--bg2); border-right: 1px solid var(--border);
+  position: sticky; top: 64px; height: calc(100vh - 64px);
+  overflow-y: auto; padding: 20px 12px;
+  flex-shrink: 0;
+}
+.sidebar-title {
+  font-size: 0.65rem; color: var(--text3); letter-spacing: 2px;
+  font-family: 'Share Tech Mono'; text-transform: uppercase;
+  padding: 8px 8px 12px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  cursor: pointer; color: var(--text2); font-size: 0.85rem;
+  font-family: 'Rajdhani', sans-serif; font-weight: 600;
+  transition: all 0.2s; margin-bottom: 2px;
+  border: 1px solid transparent;
+}
+.sidebar-item:hover { color: var(--text); background: var(--surface); }
+.sidebar-item.active {
+  color: var(--cyan); background: rgba(0,212,255,0.1);
+  border-color: rgba(0,212,255,0.2);
+}
+.sidebar-item i { width: 18px; text-align: center; font-size: 0.9rem; }
+.content { flex: 1; min-width: 0; }
+
+/* ─── PAGES ────────────────────────────────────── */
+.page { display: none; padding: 40px 36px; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+/* ─── HERO ─────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #0d1e35 0%, #0a1525 50%, #071020 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 48px 40px; margin-bottom: 36px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-80px; right:-80px;
+  width:400px; height:400px; border-radius:50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+}
+.hero::after {
+  content:''; position:absolute; bottom:-100px; left:50%;
+  width:600px; height:200px;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.05) 0%, transparent 70%);
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
+  color: var(--cyan); padding: 6px 14px; border-radius: 100px;
+  font-size: 0.75rem; font-family:'Share Tech Mono'; margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Rajdhani', sans-serif; font-weight: 700;
+  font-size: clamp(1.6rem, 4vw, 2.6rem); line-height: 1.1;
+  margin-bottom: 16px;
+}
+.hero h1 span { color: var(--cyan); }
+.hero-sub {
+  font-size: 1rem; color: var(--text2); margin-bottom: 24px;
+  max-width: 600px; font-weight: 300;
+}
+.hero-meta {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  font-size: 0.8rem; color: var(--text3);
+  font-family: 'Share Tech Mono';
+}
+.hero-meta span { display:flex; align-items:center; gap:6px; color: var(--text2); }
+.hero-meta i { color: var(--cyan); }
+
+/* ─── SECTION TITLE ─────────────────────────────── */
+.section-title {
+  font-family: 'Rajdhani', sans-serif; font-weight: 700;
+  font-size: 1.6rem; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+  color: var(--text);
+}
+.section-title .icon-wrap {
+  background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.3);
+  color: var(--cyan); width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── MENU CARDS (DASHBOARD) ──────────────────── */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.menu-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 24px;
+  cursor: pointer; transition: all 0.3s;
+  text-align: center; position: relative; overflow: hidden;
+}
+.menu-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background: var(--card-accent, var(--cyan));
+  transform: scaleX(0); transition: transform 0.3s;
+}
+.menu-card:hover { transform: translateY(-4px); box-shadow: var(--glow); border-color: var(--cyan); }
+.menu-card:hover::before { transform: scaleX(1); }
+.menu-card-icon {
+  font-size: 2rem; margin-bottom: 16px;
+  background: rgba(0,212,255,0.1); border-radius: 12px;
+  width: 64px; height: 64px; display: flex; align-items: center;
+  justify-content: center; margin: 0 auto 16px;
+  border: 1px solid rgba(0,212,255,0.2); color: var(--cyan);
+  transition: all 0.3s;
+}
+.menu-card:hover .menu-card-icon { background: rgba(0,212,255,0.2); transform: scale(1.1); }
+.menu-card h3 { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.05rem; margin-bottom:8px; }
+.menu-card p { font-size:0.78rem; color:var(--text2); line-height:1.5; }
+.menu-card .card-num {
+  position:absolute; top:12px; right:14px;
+  font-family:'Share Tech Mono'; font-size:0.65rem; color:var(--text3);
+}
+
+/* ─── TERMINAL CARDS ──────────────────────────── */
+.terminal-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px; margin-bottom: 32px;
+}
+.terminal-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; cursor: pointer;
+  transition: all 0.3s;
+}
+.terminal-card:hover { border-color: var(--cyan); box-shadow: var(--glow); transform: translateY(-2px); }
+.tc-header {
+  background: var(--bg3); padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.tc-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.tc-title { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem; }
+.tc-sub { font-size:0.72rem; color:var(--text2); }
+.tc-body { padding: 16px 18px; }
+.pin-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer; border-radius: 6px; padding: 8px 10px; margin: 2px 0;
+  transition: all 0.2s;
+}
+.pin-row:hover { background: rgba(0,212,255,0.08); }
+.pin-num {
+  font-family:'Share Tech Mono'; font-size:0.95rem; font-weight:700;
+  background: var(--bg3); border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 6px; color: var(--cyan);
+  min-width: 70px; text-align: center;
+}
+.pin-label { font-size:0.82rem; color:var(--text2); flex:1; padding-left:12px; }
+.pin-type {
+  font-size:0.65rem; padding: 3px 8px; border-radius: 20px;
+  font-family:'Share Tech Mono'; font-weight:700; letter-spacing:0.5px;
+}
+.type-no { background: rgba(0,232,122,0.15); color: var(--green); border: 1px solid rgba(0,232,122,0.3); }
+.type-nc { background: rgba(255,77,109,0.15); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
+.type-coil { background: rgba(240,180,41,0.15); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+.type-power { background: rgba(0,212,255,0.15); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+.type-trip { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+
+/* ─── IEC SVG DIAGRAM ──────────────────────────── */
+.iec-diagram {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; margin-bottom: 24px;
+}
+.iec-diagram h4 {
+  font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.1rem;
+  margin-bottom:16px; color:var(--cyan);
+  display:flex; align-items:center; gap:8px;
+}
+
+/* ─── RELAY SIMULATION ─────────────────────────── */
+.relay-sim {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.relay-sim h4 {
+  font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.1rem;
+  margin-bottom: 24px; color: var(--gold);
+  display:flex; align-items:center; gap:8px;
+}
+.sim-circuit {
+  display: flex; align-items: center; gap: 0;
+  justify-content: center; flex-wrap: wrap; gap: 8px;
+  margin: 20px 0;
+}
+.sim-node {
+  background: var(--bg3); border: 2px solid var(--border);
+  border-radius: 10px; padding: 12px 16px; text-align: center;
+  font-family:'Share Tech Mono'; font-size: 0.8rem;
+  transition: all 0.4s; min-width: 90px;
+}
+.sim-node.active { border-color: var(--green); background: rgba(0,232,122,0.1); color: var(--green); }
+.sim-node.coil-active { border-color: var(--gold); background: rgba(240,180,41,0.1); color: var(--gold); }
+.sim-arrow { color: var(--text3); font-size: 1.2rem; transition: color 0.4s; }
+.sim-arrow.active { color: var(--cyan); }
+.sim-btn {
+  padding: 12px 32px; border-radius: 10px; font-weight: 700;
+  font-family: 'Rajdhani',sans-serif; font-size: 1rem; cursor: pointer;
+  border: 2px solid; transition: all 0.2s; margin: 4px;
+  letter-spacing: 1px;
+}
+.btn-start { background: rgba(0,232,122,0.15); border-color: var(--green); color: var(--green); }
+.btn-start:hover { background: var(--green); color: #000; }
+.btn-stop { background: rgba(255,77,109,0.15); border-color: var(--red); color: var(--red); }
+.btn-stop:hover { background: var(--red); color: #fff; }
+.sim-status {
+  display: flex; align-items: center; gap: 10px; margin-top: 16px;
+  padding: 12px 18px; border-radius: 10px;
+  background: var(--bg3); font-family:'Share Tech Mono'; font-size:0.85rem;
+}
+.status-dot { width:10px; height:10px; border-radius:50%; background:var(--text3); transition:all 0.4s; }
+.status-dot.on { background: var(--green); box-shadow: 0 0 10px var(--green); }
+
+/* ─── CABLE COLORS ─────────────────────────────── */
+.cable-table { width:100%; margin-bottom: 24px; }
+.cable-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; margin-bottom: 16px;
+}
+.cable-section-title {
+  background: var(--bg3); padding: 14px 20px;
+  font-family: 'Rajdhani',sans-serif; font-weight: 700; font-size: 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.cable-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer; transition: all 0.2s;
+}
+.cable-row:hover { background: var(--surface2); }
+.cable-swatch {
+  width: 48px; height: 24px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+}
+.cable-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem; flex:1; }
+.cable-func { font-size: 0.8rem; color: var(--text2); }
+.cable-std {
+  font-family:'Share Tech Mono'; font-size: 0.7rem;
+  background: var(--bg3); padding: 3px 8px; border-radius: 6px;
+  color: var(--text3); border: 1px solid var(--border);
+}
+
+/* ─── STARTER FLOW ──────────────────────────────── */
+.flow-container {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.flow-steps {
+  display: flex; flex-direction: column; gap: 0; position: relative;
+}
+.flow-step {
+  display: flex; gap: 20px; align-items: flex-start; position: relative;
+}
+.flow-step-num {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg3); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Share Tech Mono'; font-size: 0.9rem; font-weight: 700;
+  color: var(--text3); flex-shrink: 0; z-index: 2;
+  transition: all 0.4s; cursor:pointer;
+}
+.flow-step.lit .flow-step-num {
+  background: rgba(0,212,255,0.15); border-color: var(--cyan);
+  color: var(--cyan); box-shadow: 0 0 15px rgba(0,212,255,0.3);
+}
+.flow-connector {
+  position: absolute; left: 19px; top: 40px; bottom: -20px;
+  width: 2px; background: var(--border); z-index: 1;
+  transition: background 0.4s;
+}
+.flow-step.lit + .flow-step .flow-connector { background: var(--cyan); }
+.flow-step-body { flex: 1; padding-bottom: 28px; }
+.flow-step-title {
+  font-family: 'Rajdhani',sans-serif; font-weight: 700; font-size: 1.05rem;
+  margin-bottom: 4px; transition: color 0.4s;
+}
+.flow-step.lit .flow-step-title { color: var(--cyan); }
+.flow-step-desc { font-size: 0.82rem; color: var(--text2); }
+.flow-step-pin {
+  display: inline-flex; gap: 6px; margin-top: 8px; flex-wrap:wrap;
+}
+.flow-step-pin span {
+  font-family:'Share Tech Mono'; font-size:0.75rem;
+  background: var(--bg3); border: 1px solid var(--border);
+  padding: 3px 8px; border-radius: 6px; color: var(--cyan);
+}
+.flow-sim-btns { display:flex; gap:10px; margin-top: 16px; }
+
+/* ─── PLC ───────────────────────────────────────── */
+.plc-diagram {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.plc-layout {
+  display: grid; grid-template-columns: 1fr 100px 1fr; gap: 20px;
+  align-items: start; margin: 24px 0;
+}
+.plc-column-title {
+  font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.85rem;
+  letter-spacing:2px; color:var(--text3); text-align:center; margin-bottom:12px;
+}
+.plc-io-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+}
+.plc-io-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor:pointer; transition:all 0.2s;
+}
+.plc-io-row:hover { padding-left: 4px; }
+.plc-addr {
+  font-family:'Share Tech Mono'; font-size:0.82rem;
+  color: var(--cyan); min-width: 52px; font-weight:700;
+}
+.plc-io-label { font-size:0.8rem; color:var(--text2); flex:1; }
+.plc-led {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--text3); transition: all 0.3s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.plc-led.on-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.plc-led.on-red { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.plc-center {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 8px;
+}
+.plc-box {
+  background: linear-gradient(135deg, #0d2a45, #0a1e35);
+  border: 2px solid var(--cyan); border-radius: 14px;
+  padding: 20px 12px; text-align: center; width: 90px;
+  box-shadow: var(--glow);
+}
+.plc-box-title {
+  font-family:'Orbitron',sans-serif; font-size: 0.7rem;
+  color: var(--cyan); letter-spacing:2px; margin-bottom:8px;
+}
+.plc-box-icon { font-size: 1.8rem; color: var(--cyan); margin-bottom: 8px; }
+.plc-arrow { color: var(--cyan); font-size:0.9rem; opacity:0.6; }
+
+/* ─── SAFETY ─────────────────────────────────────── */
+.safety-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px; margin-bottom: 24px;
+}
+.safety-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px; cursor:pointer;
+  transition: all 0.3s;
+}
+.safety-card:hover { transform: translateY(-3px); }
+.safety-card.danger { border-color: rgba(255,77,109,0.3); }
+.safety-card.danger:hover { box-shadow: 0 0 20px rgba(255,77,109,0.2); }
+.safety-card.warning { border-color: rgba(240,180,41,0.3); }
+.safety-card.warning:hover { box-shadow: 0 0 20px rgba(240,180,41,0.2); }
+.safety-card.info { border-color: rgba(0,212,255,0.3); }
+.safety-card.info:hover { box-shadow: 0 0 20px rgba(0,212,255,0.2); }
+.safety-icon {
+  font-size: 1.8rem; margin-bottom: 14px;
+  width: 56px; height: 56px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.safety-card.danger .safety-icon { background: rgba(255,77,109,0.12); color: var(--red); }
+.safety-card.warning .safety-icon { background: rgba(240,180,41,0.12); color: var(--gold); }
+.safety-card.info .safety-icon { background: rgba(0,212,255,0.12); color: var(--cyan); }
+.safety-card h3 { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:8px; }
+.safety-card p { font-size: 0.82rem; color: var(--text2); line-height:1.6; }
+.safety-logic {
+  background: var(--bg3); border-radius: 10px;
+  padding: 12px 16px; margin-top:14px;
+  font-family:'Share Tech Mono'; font-size: 0.78rem;
+  color: var(--text2); border-left: 3px solid var(--red);
+}
+
+/* ─── TROUBLESHOOTING ─────────────────────────── */
+.trouble-case {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+}
+.trouble-header {
+  padding: 16px 20px; display:flex; justify-content:space-between;
+  align-items:center; cursor:pointer; transition:all 0.2s;
+}
+.trouble-header:hover { background: var(--surface2); }
+.trouble-case-title {
+  font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.05rem;
+  display:flex; align-items:center; gap:10px;
+}
+.trouble-body {
+  display:none; padding: 0 20px 20px; border-top: 1px solid var(--border);
+}
+.trouble-body.open { display: block; }
+.trouble-step {
+  display: flex; gap: 14px; padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  align-items: flex-start;
+}
+.trouble-step:last-child { border-bottom: none; }
+.step-num-badge {
+  background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
+  color: var(--cyan); width: 28px; height: 28px; border-radius: 50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Share Tech Mono'; font-size:0.8rem; flex-shrink:0;
+}
+.step-content h5 { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.95rem; margin-bottom:4px; }
+.step-content p { font-size:0.8rem; color:var(--text2); }
+.step-pin {
+  font-family:'Share Tech Mono'; font-size:0.8rem;
+  color:var(--cyan); background:var(--bg3); border:1px solid var(--border);
+  padding:2px 8px; border-radius:5px; display:inline-block; margin-top:4px;
+}
+
+/* ─── POPUP / MODAL ─────────────────────────────── */
+.modal-overlay {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background: rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 0; max-width: 520px; width: 90%;
+  max-height: 80vh; overflow-y:auto;
+  animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn { from { opacity:0; transform:scale(0.85) translateY(20px); } to { opacity:1; transform:none; } }
+.modal-header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; background:var(--bg2); border-radius:20px 20px 0 0;
+}
+.modal-title { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.3rem; }
+.modal-close {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); width:34px; height:34px; border-radius:8px;
+  cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s;
+}
+.modal-close:hover { background:var(--red); color:#fff; border-color:var(--red); }
+.modal-body { padding: 24px 28px; }
+.modal-pin-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.modal-pin-item {
+  display:flex; align-items:center; gap:12px; padding:10px 14px;
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+}
+.modal-pin-num {
+  font-family:'Share Tech Mono'; font-size:0.95rem; font-weight:700;
+  color:var(--cyan); min-width:70px;
+}
+.modal-pin-desc { font-size:0.85rem; color:var(--text2); flex:1; }
+.modal-note {
+  background:var(--bg3); border-left:3px solid var(--gold);
+  padding:12px 16px; border-radius:0 8px 8px 0;
+  font-size:0.82rem; color:var(--text2); margin-top:12px;
+}
+
+/* ─── FOOTER ─────────────────────────────────────── */
+.site-footer {
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 32px 36px; text-align:center;
+}
+.footer-brand { font-family:'Orbitron',sans-serif; font-size:0.9rem; color:var(--cyan); margin-bottom:8px; }
+.footer-copy { font-size:0.78rem; color:var(--text3); font-family:'Share Tech Mono'; }
+
+/* ─── UTILS ─────────────────────────────────────── */
+.tag {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:4px 10px; border-radius:100px; font-size:0.72rem;
+  font-family:'Share Tech Mono'; font-weight:700; letter-spacing:0.3px;
+}
+.tag-iec { background:rgba(0,212,255,0.1); color:var(--cyan); border:1px solid rgba(0,212,255,0.3); }
+.tag-standard { background:rgba(240,180,41,0.1); color:var(--gold); border:1px solid rgba(240,180,41,0.3); }
+.divider { height:1px; background:var(--border); margin:24px 0; }
+.info-box {
+  background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.2);
+  border-radius:10px; padding:14px 18px; font-size:0.83rem; color:var(--text2);
+  display:flex; gap:10px; align-items:flex-start; margin:16px 0;
+}
+.info-box i { color:var(--cyan); margin-top:2px; flex-shrink:0; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar { display:none; }
+  .nav-links { display:none; }
+  .hamburger { display:block; }
+  .page { padding: 24px 18px; }
+}
+@media (max-width: 600px) {
+  .plc-layout { grid-template-columns: 1fr; }
+  .plc-center { flex-direction: row; }
+  .menu-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ──────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-brand" onclick="showPage('dashboard')">
+    <div>
+      <div class="nav-logo">MARINE<span style="color:#f0b429">WIRING</span></div>
+      <div class="nav-author"><i class="fas fa-user-cog"></i> Rafael Sukirno, CE</div>
+    </div>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a class="nav-link active" onclick="showPage('dashboard')" href="#"><i class="fas fa-home"></i> Home</a>
+    <a class="nav-link" onclick="showPage('iec')" href="#"><i class="fas fa-plug"></i> IEC</a>
+    <a class="nav-link" onclick="showPage('relay')" href="#"><i class="fas fa-circle-nodes"></i> Relay</a>
+    <a class="nav-link" onclick="showPage('cable')" href="#"><i class="fas fa-cable-car"></i> Kabel</a>
+    <a class="nav-link" onclick="showPage('starter')" href="#"><i class="fas fa-bolt"></i> Starter</a>
+    <a class="nav-link" onclick="showPage('plc')" href="#"><i class="fas fa-microchip"></i> PLC</a>
+    <a class="nav-link" onclick="showPage('safety')" href="#"><i class="fas fa-shield-halved"></i> Safety</a>
+    <a class="nav-link" onclick="showPage('trouble')" href="#"><i class="fas fa-wrench"></i> Troubleshooting</a>
+  </div>
+  <div class="nav-actions">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i></button>
+    <button class="hamburger" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a class="nav-link" onclick="showPage('dashboard');toggleMobile()" href="#"><i class="fas fa-home"></i> Dashboard</a>
+  <a class="nav-link" onclick="showPage('iec');toggleMobile()" href="#"><i class="fas fa-plug"></i> Penomoran IEC</a>
+  <a class="nav-link" onclick="showPage('relay');toggleMobile()" href="#"><i class="fas fa-circle-nodes"></i> Relay & Contactor</a>
+  <a class="nav-link" onclick="showPage('cable');toggleMobile()" href="#"><i class="fas fa-cable-car"></i> Warna Kabel</a>
+  <a class="nav-link" onclick="showPage('starter');toggleMobile()" href="#"><i class="fas fa-bolt"></i> Starter System</a>
+  <a class="nav-link" onclick="showPage('plc');toggleMobile()" href="#"><i class="fas fa-microchip"></i> PLC Control</a>
+  <a class="nav-link" onclick="showPage('safety');toggleMobile()" href="#"><i class="fas fa-shield-halved"></i> Safety System</a>
+  <a class="nav-link" onclick="showPage('trouble');toggleMobile()" href="#"><i class="fas fa-wrench"></i> Troubleshooting</a>
+</div>
+
+<!-- ─── MAIN ──────────────────────────────────────── -->
+<div class="main-wrap">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">NAVIGASI MATERI</div>
+    <div class="sidebar-item active" onclick="showPage('dashboard')"><i class="fas fa-home"></i> Dashboard</div>
+    <div class="sidebar-item" onclick="showPage('iec')"><i class="fas fa-plug"></i> Penomoran IEC</div>
+    <div class="sidebar-item" onclick="showPage('relay')"><i class="fas fa-circle-nodes"></i> Relay & Contactor</div>
+    <div class="sidebar-item" onclick="showPage('cable')"><i class="fas fa-cable-car"></i> Warna Kabel</div>
+    <div class="sidebar-item" onclick="showPage('starter')"><i class="fas fa-bolt"></i> Starter System</div>
+    <div class="sidebar-item" onclick="showPage('plc')"><i class="fas fa-microchip"></i> PLC Control</div>
+    <div class="sidebar-item" onclick="showPage('safety')"><i class="fas fa-shield-halved"></i> Safety System</div>
+    <div class="sidebar-item" onclick="showPage('trouble')"><i class="fas fa-wrench"></i> Troubleshooting</div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="hero">
+        <div class="hero-badge"><i class="fas fa-ship"></i> Marine Electrical Training</div>
+        <h1>SISTEM PENOMORAN TERMINAL, PIN,<br>& <span>WIRING</span> KAPAL</h1>
+        <p class="hero-sub">Electrical & Electronic Control – Standar IEC. Media pembelajaran interaktif untuk taruna pelaut dan teknisi sistem kontrol kapal.</p>
+        <div class="hero-meta">
+          <span><i class="fas fa-user-cog"></i> Rafael Sukirno, CE</span>
+          <span><i class="fas fa-anchor"></i> POLTEKPEL Surabaya & UHT</span>
+          <span><i class="fas fa-certificate"></i> Standar IEC 60947</span>
+          <span><i class="fas fa-graduation-cap"></i> Semester III–VI</span>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div class="icon-wrap"><i class="fas fa-grid-2"></i></div>
+        MODUL PEMBELAJARAN
+      </div>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="showPage('iec')" style="--card-accent:#00d4ff">
+          <div class="card-num">01</div>
+          <div class="menu-card-icon"><i class="fas fa-plug"></i></div>
+          <h3>Penomoran IEC</h3>
+          <p>Standar penomoran terminal NO, NC, Coil, Overload, Timer</p>
+        </div>
+        <div class="menu-card" onclick="showPage('relay')" style="--card-accent:#f0b429">
+          <div class="card-num">02</div>
+          <div class="menu-card-icon" style="background:rgba(240,180,41,0.1);border-color:rgba(240,180,41,0.2);color:var(--gold)"><i class="fas fa-circle-nodes"></i></div>
+          <h3>Relay & Contactor</h3>
+          <p>Cara kerja relay, coil A1-A2, kontak NO & NC, simulasi</p>
+        </div>
+        <div class="menu-card" onclick="showPage('cable')" style="--card-accent:#00e87a">
+          <div class="card-num">03</div>
+          <div class="menu-card-icon" style="background:rgba(0,232,122,0.1);border-color:rgba(0,232,122,0.2);color:var(--green)"><i class="fas fa-cable-car"></i></div>
+          <h3>Wiring & Warna Kabel</h3>
+          <p>Standar warna AC, DC, sensor – tabel visual interaktif</p>
+        </div>
+        <div class="menu-card" onclick="showPage('starter')" style="--card-accent:#ff8c42">
+          <div class="card-num">04</div>
+          <div class="menu-card-icon" style="background:rgba(255,140,66,0.1);border-color:rgba(255,140,66,0.2);color:var(--orange)"><i class="fas fa-bolt"></i></div>
+          <h3>Starter System</h3>
+          <p>DOL, Star-Delta – diagram alur interaktif step-by-step</p>
+        </div>
+        <div class="menu-card" onclick="showPage('plc')" style="--card-accent:#a78bfa">
+          <div class="card-num">05</div>
+          <div class="menu-card-icon" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.2);color:#a78bfa"><i class="fas fa-microchip"></i></div>
+          <h3>PLC Control</h3>
+          <p>Alamat I/O, ladder diagram, simulasi logika kontrol motor</p>
+        </div>
+        <div class="menu-card" onclick="showPage('safety')" style="--card-accent:#ff4d6d">
+          <div class="card-num">06</div>
+          <div class="menu-card-icon" style="background:rgba(255,77,109,0.1);border-color:rgba(255,77,109,0.2);color:var(--red)"><i class="fas fa-shield-halved"></i></div>
+          <h3>Safety System</h3>
+          <p>Emergency stop, overload protection, interlock, grounding</p>
+        </div>
+        <div class="menu-card" onclick="showPage('trouble')" style="--card-accent:#38bdf8">
+          <div class="card-num">07</div>
+          <div class="menu-card-icon" style="background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.2);color:#38bdf8"><i class="fas fa-wrench"></i></div>
+          <h3>Troubleshooting</h3>
+          <p>Kasus nyata: motor tidak jalan, relay mati, overload trip</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <span><b>Cara Penggunaan:</b> Klik menu di atas untuk membuka modul. Klik pada setiap komponen atau pin untuk melihat detail popup. Gunakan tombol simulasi untuk melihat cara kerja sistem secara interaktif.</span>
+      </div>
+    </div>
+
+    <!-- ═══ HALAMAN IEC ═══ -->
+    <div class="page" id="page-iec">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-plug"></i></div>PENOMORAN TERMINAL IEC</div>
+      <div class="info-box"><i class="fas fa-info-circle"></i><span>Standar IEC 60947 – digunakan di seluruh kapal berbendera internasional. Klik pada setiap baris pin untuk melihat penjelasan detail.</span></div>
+
+      <!-- IEC SVG Diagram -->
+      <div class="iec-diagram">
+        <h4><i class="fas fa-diagram-project"></i> Diagram Terminal Kontaktor IEC</h4>
+        <svg viewBox="0 0 700 280" width="100%" style="max-width:700px;display:block;margin:0 auto;">
+          <defs>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+          </defs>
+          <!-- Kontaktor box -->
+          <rect x="260" y="80" width="180" height="120" rx="10" fill="#1a2235" stroke="#2a3a55" stroke-width="1.5"/>
+          <text x="350" y="115" text-anchor="middle" fill="#00d4ff" font-family="Rajdhani,sans-serif" font-weight="700" font-size="16">KONTAKTOR</text>
+          <text x="350" y="135" text-anchor="middle" fill="#8fa3c0" font-family="Share Tech Mono" font-size="11">IEC 60947</text>
+
+          <!-- Coil A1-A2 -->
+          <rect x="275" y="148" width="50" height="40" rx="6" fill="#1e3a20" stroke="#f0b429" stroke-width="1.5" cursor="pointer" onclick="openModal('coil')"/>
+          <text x="300" y="163" text-anchor="middle" fill="#f0b429" font-family="Share Tech Mono" font-size="11">A1</text>
+          <text x="300" y="178" text-anchor="middle" fill="#f0b429" font-family="Share Tech Mono" font-size="10">Coil+</text>
+
+          <rect x="375" y="148" width="50" height="40" rx="6" fill="#1e3a20" stroke="#f0b429" stroke-width="1.5" cursor="pointer" onclick="openModal('coil')"/>
+          <text x="400" y="163" text-anchor="middle" fill="#f0b429" font-family="Share Tech Mono" font-size="11">A2</text>
+          <text x="400" y="178" text-anchor="middle" fill="#f0b429" font-family="Share Tech Mono" font-size="10">Coil–</text>
+
+          <!-- NO 13-14 -->
+          <rect x="30" y="30" width="100" height="44" rx="8" fill="#1a2a1a" stroke="#00e87a" stroke-width="1.5" cursor="pointer" onclick="openModal('no1314')"/>
+          <text x="80" y="48" text-anchor="middle" fill="#00e87a" font-family="Share Tech Mono" font-size="12" font-weight="700">13 – 14</text>
+          <text x="80" y="64" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="11">NO (Normally Open)</text>
+          <line x1="130" y1="52" x2="260" y2="120" stroke="#00e87a" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+          <!-- NC 11-12 -->
+          <rect x="30" y="100" width="100" height="44" rx="8" fill="#2a1a1a" stroke="#ff4d6d" stroke-width="1.5" cursor="pointer" onclick="openModal('nc1112')"/>
+          <text x="80" y="118" text-anchor="middle" fill="#ff4d6d" font-family="Share Tech Mono" font-size="12" font-weight="700">11 – 12</text>
+          <text x="80" y="134" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="11">NC (Normally Closed)</text>
+          <line x1="130" y1="122" x2="260" y2="140" stroke="#ff4d6d" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+          <!-- Aux NO 33-34 -->
+          <rect x="30" y="170" width="100" height="44" rx="8" fill="#1a2a1a" stroke="#00d4ff" stroke-width="1.5" cursor="pointer" onclick="openModal('aux3334')"/>
+          <text x="80" y="188" text-anchor="middle" fill="#00d4ff" font-family="Share Tech Mono" font-size="12" font-weight="700">33 – 34</text>
+          <text x="80" y="204" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="11">Aux NO</text>
+          <line x1="130" y1="192" x2="260" y2="170" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+
+          <!-- Aux NC 21-22 -->
+          <rect x="30" y="230" width="100" height="44" rx="8" fill="#2a1a20" stroke="#a78bfa" stroke-width="1.5" cursor="pointer" onclick="openModal('aux2122')"/>
+          <text x="80" y="248" text-anchor="middle" fill="#a78bfa" font-family="Share Tech Mono" font-size="12" font-weight="700">21 – 22</text>
+          <text x="80" y="264" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="11">Aux NC</text>
+
+          <!-- Power L-T -->
+          <rect x="570" y="30" width="100" height="54" rx="8" fill="#1a2035" stroke="#00d4ff" stroke-width="1.5" cursor="pointer" onclick="openModal('power')"/>
+          <text x="620" y="50" text-anchor="middle" fill="#00d4ff" font-family="Share Tech Mono" font-size="12" font-weight="700">L1 L2 L3</text>
+          <text x="620" y="66" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="10">Power Input</text>
+          <line x1="570" y1="57" x2="440" y2="100" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+          <rect x="570" y="110" width="100" height="54" rx="8" fill="#1a2035" stroke="#38bdf8" stroke-width="1.5" cursor="pointer" onclick="openModal('power')"/>
+          <text x="620" y="130" text-anchor="middle" fill="#38bdf8" font-family="Share Tech Mono" font-size="12" font-weight="700">T1 T2 T3</text>
+          <text x="620" y="146" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="10">Power Output</text>
+          <line x1="570" y1="137" x2="440" y2="150" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+          <!-- Overload -->
+          <rect x="570" y="200" width="100" height="64" rx="8" fill="#2a1a10" stroke="#ff8c42" stroke-width="1.5" cursor="pointer" onclick="openModal('overload')"/>
+          <text x="620" y="218" text-anchor="middle" fill="#ff8c42" font-family="Share Tech Mono" font-size="11" font-weight="700">95 – 96</text>
+          <text x="620" y="232" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="9">Trip (NC)</text>
+          <text x="620" y="248" text-anchor="middle" fill="#f0b429" font-family="Share Tech Mono" font-size="11" font-weight="700">97 – 98</text>
+          <text x="620" y="260" text-anchor="middle" fill="#8fa3c0" font-family="Barlow,sans-serif" font-size="9">Alarm (NO)</text>
+
+          <!-- Label klik -->
+          <text x="350" y="265" text-anchor="middle" fill="#4a6080" font-family="Barlow,sans-serif" font-size="11">Klik pada setiap blok terminal untuk detail</text>
+        </svg>
+      </div>
+
+      <!-- Terminal Cards -->
+      <div class="terminal-grid">
+        <!-- Kontak Utama -->
+        <div class="terminal-card" onclick="openModal('kontakutama')">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(0,232,122,0.15);color:var(--green);border:1px solid rgba(0,232,122,0.3)"><i class="fas fa-plug"></i></div>
+            <div>
+              <div class="tc-title">Kontak Utama</div>
+              <div class="tc-sub">Main Contact – IEC 60947</div>
+            </div>
+          </div>
+          <div class="tc-body">
+            <div class="pin-row" onclick.stop="openModal('no1314')">
+              <span class="pin-num">13 – 14</span>
+              <span class="pin-label">NO – Normally Open</span>
+              <span class="pin-type type-no">NO</span>
+            </div>
+            <div class="pin-row" onclick.stop="openModal('nc1112')">
+              <span class="pin-num">11 – 12</span>
+              <span class="pin-label">NC – Normally Closed</span>
+              <span class="pin-type type-nc">NC</span>
+            </div>
+            <div class="pin-row" onclick.stop="openModal('aux3334')">
+              <span class="pin-num">33 – 34</span>
+              <span class="pin-label">Auxiliary NO</span>
+              <span class="pin-type type-no">AUX</span>
+            </div>
+            <div class="pin-row" onclick.stop="openModal('aux2122')">
+              <span class="pin-num">21 – 22</span>
+              <span class="pin-label">Auxiliary NC</span>
+              <span class="pin-type type-nc">AUX</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Koil -->
+        <div class="terminal-card" onclick="openModal('coil')">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(240,180,41,0.15);color:var(--gold);border:1px solid rgba(240,180,41,0.3)"><i class="fas fa-magnet"></i></div>
+            <div>
+              <div class="tc-title">Coil Kontaktor</div>
+              <div class="tc-sub">Coil / Kumparan Elektromagnetik</div>
+            </div>
+          </div>
+          <div class="tc-body">
+            <div class="pin-row">
+              <span class="pin-num">A1</span>
+              <span class="pin-label">Line / Positif (+)</span>
+              <span class="pin-type type-coil">COIL</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">A2</span>
+              <span class="pin-label">Neutral / Negatif (–)</span>
+              <span class="pin-type type-coil">COIL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overload -->
+        <div class="terminal-card" onclick="openModal('overload')">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(255,140,66,0.15);color:var(--orange);border:1px solid rgba(255,140,66,0.3)"><i class="fas fa-temperature-high"></i></div>
+            <div>
+              <div class="tc-title">Overload Relay</div>
+              <div class="tc-sub">Thermal Overload Protection</div>
+            </div>
+          </div>
+          <div class="tc-body">
+            <div class="pin-row">
+              <span class="pin-num">95 – 96</span>
+              <span class="pin-label">Trip Contact (NC)</span>
+              <span class="pin-type type-trip">TRIP</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">97 – 98</span>
+              <span class="pin-label">Alarm Contact (NO)</span>
+              <span class="pin-type type-no">ALARM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timer -->
+        <div class="terminal-card" onclick="openModal('timer')">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(0,212,255,0.15);color:var(--cyan);border:1px solid rgba(0,212,255,0.3)"><i class="fas fa-clock"></i></div>
+            <div>
+              <div class="tc-title">Timer Relay</div>
+              <div class="tc-sub">Time Delay Contact</div>
+            </div>
+          </div>
+          <div class="tc-body">
+            <div class="pin-row">
+              <span class="pin-num">A1 – A2</span>
+              <span class="pin-label">Coil / Sumber Daya</span>
+              <span class="pin-type type-coil">COIL</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">15 – 16</span>
+              <span class="pin-label">NO dengan tunda waktu</span>
+              <span class="pin-type type-no">NO-T</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">15 – 18</span>
+              <span class="pin-label">NC dengan tunda waktu</span>
+              <span class="pin-type type-nc">NC-T</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Power Terminals -->
+        <div class="terminal-card" onclick="openModal('power')">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(0,212,255,0.15);color:var(--cyan);border:1px solid rgba(0,212,255,0.3)"><i class="fas fa-bolt"></i></div>
+            <div>
+              <div class="tc-title">Power Terminal</div>
+              <div class="tc-sub">Daya Utama 3-Phase</div>
+            </div>
+          </div>
+          <div class="tc-body">
+            <div class="pin-row">
+              <span class="pin-num">L1 L2 L3</span>
+              <span class="pin-label">Input Supply 3-Phase</span>
+              <span class="pin-type type-power">INPUT</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">T1 T2 T3</span>
+              <span class="pin-label">Output ke Motor</span>
+              <span class="pin-type type-power">OUTPUT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Push Button -->
+        <div class="terminal-card" onclick="openModal('pushbutton')">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(167,139,250,0.15);color:#a78bfa;border:1px solid rgba(167,139,250,0.3)"><i class="fas fa-circle-dot"></i></div>
+            <div>
+              <div class="tc-title">Push Button</div>
+              <div class="tc-sub">START & STOP</div>
+            </div>
+          </div>
+          <div class="tc-body">
+            <div class="pin-row">
+              <span class="pin-num">1 – 2</span>
+              <span class="pin-label">NC – STOP (merah)</span>
+              <span class="pin-type type-nc">STOP</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">3 – 4</span>
+              <span class="pin-label">NC – backup STOP</span>
+              <span class="pin-type type-nc">NC</span>
+            </div>
+            <div class="pin-row">
+              <span class="pin-num">13 – 14</span>
+              <span class="pin-label">NO – START (hijau)</span>
+              <span class="pin-type type-no">START</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RELAY & CONTACTOR ═══ -->
+    <div class="page" id="page-relay">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-circle-nodes"></i></div>RELAY & CONTACTOR</div>
+
+      <!-- Cara Kerja -->
+      <div class="relay-sim">
+        <h4><i class="fas fa-play-circle"></i> Simulasi Interaktif – Cara Kerja Relay/Kontaktor</h4>
+        <div class="sim-circuit">
+          <div class="sim-node" id="sn-power">220V AC<br><small>Supply</small></div>
+          <div class="sim-arrow" id="sa1"><i class="fas fa-arrow-right"></i></div>
+          <div class="sim-node" id="sn-stop">STOP<br><small>NC 11-12</small></div>
+          <div class="sim-arrow" id="sa2"><i class="fas fa-arrow-right"></i></div>
+          <div class="sim-node" id="sn-start">START<br><small>NO 13-14</small></div>
+          <div class="sim-arrow" id="sa3"><i class="fas fa-arrow-right"></i></div>
+          <div class="sim-node" id="sn-coil">COIL<br><small>A1–A2</small></div>
+          <div class="sim-arrow" id="sa4"><i class="fas fa-arrow-right"></i></div>
+          <div class="sim-node" id="sn-contactor">KONTAK<br><small>L-T</small></div>
+          <div class="sim-arrow" id="sa5"><i class="fas fa-arrow-right"></i></div>
+          <div class="sim-node" id="sn-motor">MOTOR<br><small>Running</small></div>
+        </div>
+        <div style="text-align:center;margin:10px 0">
+          <button class="sim-btn btn-start" onclick="startRelay()"><i class="fas fa-play"></i> START</button>
+          <button class="sim-btn btn-stop" onclick="stopRelay()"><i class="fas fa-stop"></i> STOP</button>
+        </div>
+        <div class="sim-status" id="relayStatus">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Motor STOP – Tekan START untuk mengaktifkan</span>
+        </div>
+        <div class="info-box" style="margin-top:16px">
+          <i class="fas fa-lightbulb"></i>
+          <span><b>Self Holding:</b> Kontak bantu NO 33-34 terhubung paralel dengan tombol START. Saat kontaktor ON, kontak ini mengunci (latch) sehingga motor tetap jalan meski tombol START dilepas.</span>
+        </div>
+      </div>
+
+      <!-- Terminal Detail Cards -->
+      <div class="terminal-grid">
+        <div class="terminal-card">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(240,180,41,0.15);color:var(--gold)"><i class="fas fa-magnet"></i></div>
+            <div><div class="tc-title">Prinsip Kerja Coil</div></div>
+          </div>
+          <div class="tc-body">
+            <p style="font-size:0.82rem;color:var(--text2);line-height:1.7;margin-bottom:12px;">Koil A1-A2 adalah kumparan elektromagnetik. Saat arus mengalir melalui A1→A2, medan magnet terbentuk, menarik inti besi dan menutup semua kontak NO, membuka kontak NC.</p>
+            <div class="pin-row"><span class="pin-num">A1</span><span class="pin-label">Tegangan masuk (+)</span><span class="pin-type type-coil">LINE</span></div>
+            <div class="pin-row"><span class="pin-num">A2</span><span class="pin-label">Kembali ke neutral (–)</span><span class="pin-type type-coil">NEUTRAL</span></div>
+          </div>
+        </div>
+
+        <div class="terminal-card">
+          <div class="tc-header">
+            <div class="tc-icon" style="background:rgba(0,232,122,0.15);color:var(--green)"><i class="fas fa-toggle-off"></i></div>
+            <div><div class="tc-title">Kontak NO vs NC</div></div>
+          </div>
+          <div class="tc-body">
+            <p style="font-size:0.82rem;color:var(--text2);margin-bottom:12px;line-height:1.6">NO = terbuka saat tidak ada daya, menutup saat coil aktif. NC = menutup saat tidak ada daya, terbuka saat coil aktif.</p>
+            <div class="pin-row"><span class="pin-num">NO (13-14)</span><span class="pin-label">Terbuka → Menutup</span><span class="pin-type type-no">NO</span></div>
+            <div class="pin-row"><span class="pin-num">NC (11-12)</span><span class="pin-label">Menutup → Terbuka</span><span class="pin-type type-nc">NC</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ WARNA KABEL ═══ -->
+    <div class="page" id="page-cable">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-cable-car"></i></div>WIRING & WARNA KABEL</div>
+      <div class="info-box"><i class="fas fa-info-circle"></i><span>Standar warna kabel berdasarkan IEC 60446 dan CENELEC HD 308. Hover / klik pada baris untuk detail penggunaan di kapal.</span></div>
+
+      <!-- AC -->
+      <div class="cable-section">
+        <div class="cable-section-title"><i class="fas fa-plug" style="color:var(--cyan)"></i> AC – Arus Bolak-Balik (IEC 60446)</div>
+        <div class="cable-row" onclick="openModal('cable-brown')">
+          <div class="cable-swatch" style="background:#8B4513;border-color:#a05a2c"></div>
+          <span class="cable-name">Coklat (Brown)</span>
+          <span class="cable-func">Phase L1 / Line</span>
+          <span class="cable-std">IEC / CENELEC</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-black')">
+          <div class="cable-swatch" style="background:#222;border-color:#444"></div>
+          <span class="cable-name">Hitam (Black)</span>
+          <span class="cable-func">Phase L2</span>
+          <span class="cable-std">IEC / CENELEC</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-grey')">
+          <div class="cable-swatch" style="background:#888;border-color:#aaa"></div>
+          <span class="cable-name">Abu-abu (Grey)</span>
+          <span class="cable-func">Phase L3</span>
+          <span class="cable-std">IEC / CENELEC</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-blue')">
+          <div class="cable-swatch" style="background:#1565C0;border-color:#1976D2"></div>
+          <span class="cable-name">Biru (Blue)</span>
+          <span class="cable-func">Neutral (N)</span>
+          <span class="cable-std">IEC 60446</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-green')">
+          <div class="cable-swatch" style="background:linear-gradient(90deg,#2e7d32 50%,#f9a825 50%);border-color:#388e3c"></div>
+          <span class="cable-name">Hijau/Kuning</span>
+          <span class="cable-func">Ground / Earth (PE)</span>
+          <span class="cable-std">IEC 60446 WAJIB</span>
+        </div>
+      </div>
+
+      <!-- DC -->
+      <div class="cable-section">
+        <div class="cable-section-title"><i class="fas fa-battery-full" style="color:var(--gold)"></i> DC – Arus Searah (IEC 60446)</div>
+        <div class="cable-row" onclick="openModal('cable-red')">
+          <div class="cable-swatch" style="background:#c62828;border-color:#e53935"></div>
+          <span class="cable-name">Merah (Red)</span>
+          <span class="cable-func">Positif (+)</span>
+          <span class="cable-std">IEC / BS</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-blackdc')">
+          <div class="cable-swatch" style="background:#111;border-color:#333"></div>
+          <span class="cable-name">Hitam (Black)</span>
+          <span class="cable-func">Negatif (–)</span>
+          <span class="cable-std">IEC / BS</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-green')">
+          <div class="cable-swatch" style="background:linear-gradient(90deg,#2e7d32 50%,#f9a825 50%)"></div>
+          <span class="cable-name">Hijau/Kuning</span>
+          <span class="cable-func">Ground (PE)</span>
+          <span class="cable-std">IEC 60446</span>
+        </div>
+      </div>
+
+      <!-- Sensor -->
+      <div class="cable-section">
+        <div class="cable-section-title"><i class="fas fa-wifi" style="color:var(--green)"></i> Kabel Sensor – 3 Kawat (IEC 60757)</div>
+        <div class="cable-row" onclick="openModal('cable-sensor-brown')">
+          <div class="cable-swatch" style="background:#8B4513"></div>
+          <span class="cable-name">Coklat (Brown)</span>
+          <span class="cable-func">+ VCC / Supply Positif</span>
+          <span class="cable-std">Sensor 3-wire</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-sensor-blue')">
+          <div class="cable-swatch" style="background:#1565C0"></div>
+          <span class="cable-name">Biru (Blue)</span>
+          <span class="cable-func">– GND / Negatif</span>
+          <span class="cable-std">Sensor 3-wire</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-sensor-black')">
+          <div class="cable-swatch" style="background:#222"></div>
+          <span class="cable-name">Hitam (Black)</span>
+          <span class="cable-func">Output Signal (PNP/NPN)</span>
+          <span class="cable-std">Sensor 3-wire</span>
+        </div>
+        <div class="cable-row" onclick="openModal('cable-sensor-white')">
+          <div class="cable-swatch" style="background:#ccc;border-color:#999"></div>
+          <span class="cable-name">Putih (White)</span>
+          <span class="cable-func">Signal 2 (4-wire sensor)</span>
+          <span class="cable-std">Sensor 4-wire</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STARTER SYSTEM ═══ -->
+    <div class="page" id="page-starter">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-bolt"></i></div>STARTER SYSTEM KAPAL</div>
+
+      <!-- DOL Flow -->
+      <div class="flow-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <h4 style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:1.1rem;color:var(--gold)"><i class="fas fa-arrow-trend-up"></i> DOL Starter – Alur Kerja Interaktif</h4>
+          <div class="flow-sim-btns">
+            <button class="sim-btn btn-start" onclick="runFlow()" style="padding:8px 20px"><i class="fas fa-play"></i> Jalankan</button>
+            <button class="sim-btn btn-stop" onclick="resetFlow()" style="padding:8px 20px"><i class="fas fa-rotate-left"></i> Reset</button>
+          </div>
+        </div>
+        <div class="flow-steps" id="flowSteps">
+          <div class="flow-step" id="fs0">
+            <div class="flow-connector"></div>
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-body">
+              <div class="flow-step-title">STOP Button Aktif (NC)</div>
+              <div class="flow-step-desc">Tombol STOP dalam kondisi Normally Closed – arus dapat mengalir melewatinya. Sistem siap menerima perintah START.</div>
+              <div class="flow-step-pin"><span>11 – 12</span><span>NC</span></div>
+            </div>
+          </div>
+          <div class="flow-step" id="fs1">
+            <div class="flow-connector"></div>
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-body">
+              <div class="flow-step-title">Tekan Tombol START</div>
+              <div class="flow-step-desc">Tombol START ditekan, menutup kontak NO. Arus mengalir ke rangkaian coil kontaktor.</div>
+              <div class="flow-step-pin"><span>13 – 14</span><span>NO → Tutup</span></div>
+            </div>
+          </div>
+          <div class="flow-step" id="fs2">
+            <div class="flow-connector"></div>
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-body">
+              <div class="flow-step-title">Coil A1-A2 Teraliri</div>
+              <div class="flow-step-desc">Coil kontaktor menerima tegangan 220V AC melalui terminal A1 (L) dan A2 (N). Medan elektromagnetik terbentuk.</div>
+              <div class="flow-step-pin"><span>A1</span><span>A2</span><span>220V AC</span></div>
+            </div>
+          </div>
+          <div class="flow-step" id="fs3">
+            <div class="flow-connector"></div>
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-body">
+              <div class="flow-step-title">Kontaktor ON – Kontak Menutup</div>
+              <div class="flow-step-desc">Semua kontak NO menutup: L1-T1, L2-T2, L3-T3. Daya 3-phase tersambung ke motor. Kontak bantu 33-34 juga menutup.</div>
+              <div class="flow-step-pin"><span>L1→T1</span><span>L2→T2</span><span>L3→T3</span></div>
+            </div>
+          </div>
+          <div class="flow-step" id="fs4">
+            <div class="flow-connector"></div>
+            <div class="flow-step-num">5</div>
+            <div class="flow-step-body">
+              <div class="flow-step-title">Motor Berjalan</div>
+              <div class="flow-step-desc">Motor menerima daya penuh 3-phase. Motor berputar pada kecepatan penuh (full speed). Arus start tinggi sesaat.</div>
+              <div class="flow-step-pin"><span>3-Phase Motor ON</span></div>
+            </div>
+          </div>
+          <div class="flow-step" id="fs5">
+            <div class="flow-connector" style="display:none"></div>
+            <div class="flow-step-num">6</div>
+            <div class="flow-step-body">
+              <div class="flow-step-title">Self Holding (Latch) Aktif</div>
+              <div class="flow-step-desc">Kontak bantu NO 33-34 terhubung paralel dengan tombol START. Motor tetap jalan meski tombol START dilepas.</div>
+              <div class="flow-step-pin"><span>33 – 34</span><span>Self Latch</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Star-Delta Info -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;">
+        <h4 style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:1.1rem;color:var(--cyan);margin-bottom:20px"><i class="fas fa-star"></i> Star-Delta Starter – Urutan Kerja</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+          <div style="background:var(--bg3);border:1px solid rgba(0,232,122,0.3);border-radius:12px;padding:16px;text-align:center;cursor:pointer" onclick="openModal('main-contactor')">
+            <div style="font-size:1.5rem;color:var(--cyan);margin-bottom:8px"><i class="fas fa-1"></i></div>
+            <div style="font-family:Rajdhani,sans-serif;font-weight:700">Main Contactor</div>
+            <div style="font-size:0.75rem;color:var(--text2);margin-top:4px">Selalu ON selama motor jalan</div>
+            <div style="font-family:'Share Tech Mono';font-size:0.75rem;color:var(--cyan);margin-top:8px">A1-A2 | 13-14</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid rgba(240,180,41,0.3);border-radius:12px;padding:16px;text-align:center;cursor:pointer" onclick="openModal('star-contactor')">
+            <div style="font-size:1.5rem;color:var(--gold);margin-bottom:8px"><i class="fas fa-star"></i></div>
+            <div style="font-family:Rajdhani,sans-serif;font-weight:700">Star Contactor</div>
+            <div style="font-size:0.75rem;color:var(--text2);margin-top:4px">Pertama ON – tegangan reduced</div>
+            <div style="font-family:'Share Tech Mono';font-size:0.75rem;color:var(--gold);margin-top:8px">13-14 | Timer</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid rgba(255,140,66,0.3);border-radius:12px;padding:16px;text-align:center;cursor:pointer" onclick="openModal('delta-contactor')">
+            <div style="font-size:1.5rem;color:var(--orange);margin-bottom:8px"><i class="fas fa-triangle-exclamation"></i></div>
+            <div style="font-family:Rajdhani,sans-serif;font-weight:700">Delta Contactor</div>
+            <div style="font-size:0.75rem;color:var(--text2);margin-top:4px">Setelah delay – full voltage</div>
+            <div style="font-family:'Share Tech Mono';font-size:0.75rem;color:var(--orange);margin-top:8px">13-14 | Interlock NC</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid rgba(0,212,255,0.3);border-radius:12px;padding:16px;text-align:center;cursor:pointer" onclick="openModal('timer')">
+            <div style="font-size:1.5rem;color:var(--cyan);margin-bottom:8px"><i class="fas fa-clock"></i></div>
+            <div style="font-family:Rajdhani,sans-serif;font-weight:700">Timer TON</div>
+            <div style="font-size:0.75rem;color:var(--text2);margin-top:4px">5–10 detik delay star→delta</div>
+            <div style="font-family:'Share Tech Mono';font-size:0.75rem;color:var(--cyan);margin-top:8px">15-16 | 15-18</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PLC ═══ -->
+    <div class="page" id="page-plc">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-microchip"></i></div>PLC CONTROL</div>
+
+      <div class="plc-diagram">
+        <h4 style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:1.1rem;color:var(--cyan);margin-bottom:8px"><i class="fas fa-diagram-project"></i> Simulasi PLC – Motor Control</h4>
+        <p style="font-size:0.82rem;color:var(--text2);margin-bottom:24px">Klik tombol di kolom INPUT untuk mengaktifkan – lihat OUTPUT bereaksi</p>
+
+        <div class="plc-layout">
+          <!-- INPUT -->
+          <div>
+            <div class="plc-column-title">INPUT MODULE</div>
+            <div class="plc-io-card">
+              <div class="plc-io-row" onclick="plcToggle('I0_0')">
+                <span class="plc-addr">I0.0</span>
+                <span class="plc-io-label">START Push Button (NO)</span>
+                <div class="plc-led" id="led-I0_0"></div>
+              </div>
+              <div class="plc-io-row" onclick="plcToggle('I0_1')">
+                <span class="plc-addr">I0.1</span>
+                <span class="plc-io-label">STOP Push Button (NC)</span>
+                <div class="plc-led on-green" id="led-I0_1"></div>
+              </div>
+              <div class="plc-io-row" onclick="plcToggle('I0_2')">
+                <span class="plc-addr">I0.2</span>
+                <span class="plc-io-label">Overload Trip (NC)</span>
+                <div class="plc-led on-green" id="led-I0_2"></div>
+              </div>
+              <div class="plc-io-row" onclick="plcToggle('I0_3')">
+                <span class="plc-addr">I0.3</span>
+                <span class="plc-io-label">Emergency Stop (NC)</span>
+                <div class="plc-led on-green" id="led-I0_3"></div>
+              </div>
+              <div class="plc-io-row">
+                <span class="plc-addr">I0.4</span>
+                <span class="plc-io-label">Remote/Local Select</span>
+                <div class="plc-led" id="led-I0_4"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PLC CENTER -->
+          <div class="plc-center">
+            <div class="plc-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="plc-box">
+              <div class="plc-box-icon"><i class="fas fa-microchip"></i></div>
+              <div class="plc-box-title">PLC CPU</div>
+              <div style="font-family:'Share Tech Mono';font-size:0.65rem;color:var(--text3)">Ladder<br>Program</div>
+            </div>
+            <div class="plc-arrow"><i class="fas fa-arrow-right"></i></div>
+          </div>
+
+          <!-- OUTPUT -->
+          <div>
+            <div class="plc-column-title">OUTPUT MODULE</div>
+            <div class="plc-io-card">
+              <div class="plc-io-row">
+                <span class="plc-addr">Q0.0</span>
+                <span class="plc-io-label">Motor Contactor (KM1)</span>
+                <div class="plc-led" id="led-Q0_0"></div>
+              </div>
+              <div class="plc-io-row">
+                <span class="plc-addr">Q0.1</span>
+                <span class="plc-io-label">Alarm Buzzer / Sirine</span>
+                <div class="plc-led" id="led-Q0_1"></div>
+              </div>
+              <div class="plc-io-row">
+                <span class="plc-addr">Q0.2</span>
+                <span class="plc-io-label">Lampu RUNNING (Hijau)</span>
+                <div class="plc-led" id="led-Q0_2"></div>
+              </div>
+              <div class="plc-io-row">
+                <span class="plc-addr">Q0.3</span>
+                <span class="plc-io-label">Lampu FAULT (Merah)</span>
+                <div class="plc-led" id="led-Q0_3"></div>
+              </div>
+              <div class="plc-io-row">
+                <span class="plc-addr">Q0.4</span>
+                <span class="plc-io-label">Remote Feedback Signal</span>
+                <div class="plc-led" id="led-Q0_4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLC Status -->
+        <div class="sim-status" id="plcStatus" style="margin-top:16px">
+          <div class="status-dot" id="plcDot"></div>
+          <span id="plcStatusText">Klik I0.0 (START) untuk menjalankan motor – I0.1, I0.2, I0.3 harus aktif (NC = ON)</span>
+        </div>
+
+        <!-- Ladder Code -->
+        <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-top:16px;font-family:'Share Tech Mono';font-size:0.78rem;color:var(--text2);border:1px solid var(--border)">
+          <div style="color:var(--text3);margin-bottom:8px">// LADDER LOGIC – DOL Motor Control</div>
+          <div>NETWORK 1: <span style="color:var(--green)">|--I0.0--+--I0.1(NC)--I0.2(NC)--I0.3(NC)--( Q0.0 )--|</span></div>
+          <div style="padding-left:88px;color:var(--cyan)">+--Q0.0--+ (Self Holding)</div>
+          <div style="margin-top:6px">NETWORK 2: <span style="color:var(--gold)">|--Q0.0--------------------( Q0.2 )--| </span><span style="color:var(--text3)">(Running Lamp)</span></div>
+          <div>NETWORK 3: <span style="color:var(--red)">|--I0.2(NO)----------------( Q0.1 )--| </span><span style="color:var(--text3)">(Overload Alarm)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SAFETY ═══ -->
+    <div class="page" id="page-safety">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-shield-halved"></i></div>SAFETY SYSTEM</div>
+      <div class="info-box"><i class="fas fa-triangle-exclamation"></i><span>Semua sistem safety menggunakan prinsip FAIL-SAFE: kontak NC sehingga jika kabel putus/fault, sistem otomatis TRIP (berhenti). Ini standar wajib SOLAS & IMO.</span></div>
+
+      <div class="safety-grid">
+        <div class="safety-card danger" onclick="openModal('emergency-stop')">
+          <div class="safety-icon"><i class="fas fa-hand"></i></div>
+          <h3>Emergency Stop (E-Stop)</h3>
+          <p>Tombol mushroom berwarna merah dengan penutup kuning. Menggunakan kontak NC (11-12). Memutus semua sistem saat ditekan.</p>
+          <div class="safety-logic">NC (11-12) → Putus → Coil A1-A2 mati → Kontaktor OFF → Motor STOP</div>
+        </div>
+        <div class="safety-card warning" onclick="openModal('overload')">
+          <div class="safety-icon"><i class="fas fa-temperature-high"></i></div>
+          <h3>Overload Protection</h3>
+          <p>Melindungi motor dari arus berlebih. Kontak 95-96 (NC) pada rangkaian kontrol. Trip saat arus melebihi setting.</p>
+          <div class="safety-logic">Arus lebih → Bimetal trip → 95-96 terbuka → Coil mati → Motor STOP</div>
+        </div>
+        <div class="safety-card info" onclick="openModal('interlock')">
+          <div class="safety-icon"><i class="fas fa-lock"></i></div>
+          <h3>Interlock System</h3>
+          <p>Mencegah dua kontaktor aktif bersamaan. Star-Delta: kontak NC Star di rangkaian Delta (dan sebaliknya).</p>
+          <div class="safety-logic">Star ON → NC Star (di Delta) terbuka → Delta tidak bisa ON</div>
+        </div>
+        <div class="safety-card info" onclick="openModal('grounding')">
+          <div class="safety-icon"><i class="fas fa-earth-asia"></i></div>
+          <h3>Grounding / Earthing</h3>
+          <p>Kabel hijau/kuning PE terhubung ke badan motor, panel, dan busbar ground. Melindungi awak kapal dari sengatan listrik.</p>
+          <div class="safety-logic">Kebocoran arus → ke PE → RCD/ELCB trip → Sumber terputus</div>
+        </div>
+        <div class="safety-card danger" onclick="openModal('low-oil')">
+          <div class="safety-icon"><i class="fas fa-oil-can"></i></div>
+          <h3>Low Oil Pressure Trip</h3>
+          <p>Sensor tekanan oli mesin induk. Jika tekanan &lt; 2.5 bar, sinyal dikirim ke PLC/relay dan motor tidak bisa start.</p>
+          <div class="safety-logic">Tekanan rendah → Pressure Switch terbuka → I0.x PLC = 0 → Q0.0 = 0 → Tidak bisa START</div>
+        </div>
+        <div class="safety-card warning" onclick="openModal('high-temp')">
+          <div class="safety-icon"><i class="fas fa-thermometer-full"></i></div>
+          <h3>High Temperature Alarm</h3>
+          <p>Thermostat atau PT100 pada bearing motor. Alarm pada suhu >80°C, shutdown pada >100°C.</p>
+          <div class="safety-logic">Suhu tinggi → Thermostat trip (NC terbuka) → Alarm Q0.1 → Shutdown Q0.0 OFF</div>
+        </div>
+      </div>
+
+      <!-- Safety Table -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;">
+        <h4 style="font-family:Rajdhani,sans-serif;font-weight:700;margin-bottom:16px;color:var(--gold)"><i class="fas fa-table"></i> Tabel Referensi Safety Devices</h4>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+            <thead>
+              <tr style="background:var(--bg3)">
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2)">Device</th>
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2)">Terminal</th>
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2)">Tipe Kontak</th>
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2)">Fungsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 14px;border:1px solid var(--border)">Emergency Stop</td>
+                <td style="padding:10px 14px;border:1px solid var(--border);font-family:'Share Tech Mono';color:var(--red)">11–12</td>
+                <td style="padding:10px 14px;border:1px solid var(--border)"><span class="pin-type type-nc">NC</span></td>
+                <td style="padding:10px 14px;border:1px solid var(--border);color:var(--text2)">Hentikan semua kontrol</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 14px;border:1px solid var(--border)">Overload</td>
+                <td style="padding:10px 14px;border:1px solid var(--border);font-family:'Share Tech Mono';color:var(--orange)">95–96</td>
+                <td style="padding:10px 14px;border:1px solid var(--border)"><span class="pin-type type-nc">NC-Trip</span></td>
+                <td style="padding:10px 14px;border:1px solid var(--border);color:var(--text2)">Trip arus lebih</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 14px;border:1px solid var(--border)">Overload Alarm</td>
+                <td style="padding:10px 14px;border:1px solid var(--border);font-family:'Share Tech Mono';color:var(--gold)">97–98</td>
+                <td style="padding:10px 14px;border:1px solid var(--border)"><span class="pin-type type-no">NO-Alarm</span></td>
+                <td style="padding:10px 14px;border:1px solid var(--border);color:var(--text2)">Sinyal alarm ke panel</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 14px;border:1px solid var(--border)">Grounding</td>
+                <td style="padding:10px 14px;border:1px solid var(--border);font-family:'Share Tech Mono';color:var(--green)">PE</td>
+                <td style="padding:10px 14px;border:1px solid var(--border)"><span class="tag tag-standard">Hijau/Kuning</span></td>
+                <td style="padding:10px 14px;border:1px solid var(--border);color:var(--text2)">Proteksi kejutan listrik</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TROUBLESHOOTING ═══ -->
+    <div class="page" id="page-trouble">
+      <div class="section-title"><div class="icon-wrap"><i class="fas fa-wrench"></i></div>TROUBLESHOOTING</div>
+      <div class="info-box"><i class="fas fa-tools"></i><span>Klik pada setiap kasus untuk membuka langkah pemeriksaan step-by-step. Gunakan multimeter untuk verifikasi di lapangan.</span></div>
+
+      <div class="trouble-case">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <div class="trouble-case-title"><i class="fas fa-motor" style="color:var(--red)"></i><span style="color:var(--red)">KASUS 1:</span> Motor Tidak Mau Jalan Sama Sekali</div>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-step">
+            <div class="step-num-badge">1</div>
+            <div class="step-content">
+              <h5>Cek Tegangan Supply ke Panel</h5>
+              <p>Ukur tegangan di MCB/MCCB utama. Harus ada 380V/440V AC 3-phase.</p>
+              <div><span class="step-pin">L1 L2 L3 – MCB</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">2</div>
+            <div class="step-content">
+              <h5>Cek Coil Kontaktor A1-A2</h5>
+              <p>Ukur tegangan pada terminal A1-A2 saat tombol START ditekan. Harus ada tegangan kontrol (220V atau 24V).</p>
+              <div><span class="step-pin">A1 – A2</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">3</div>
+            <div class="step-content">
+              <h5>Cek Kontak NO Push Button START</h5>
+              <p>Ukur kontinuitas terminal 13-14 saat START ditekan. Harus menutup (nilai Ohm rendah).</p>
+              <div><span class="step-pin">13 – 14 (START)</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">4</div>
+            <div class="step-content">
+              <h5>Cek Overload Reset</h5>
+              <p>Periksa apakah overload dalam kondisi trip. Tekan tombol RESET pada overload relay. Cek kontak 95-96.</p>
+              <div><span class="step-pin">95 – 96 (NC)</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">5</div>
+            <div class="step-content">
+              <h5>Cek Kontaktor Power (L-T)</h5>
+              <p>Ukur tegangan di T1, T2, T3 saat kontaktor ON. Jika tidak ada tegangan, kontak kontaktor rusak.</p>
+              <div><span class="step-pin">T1 T2 T3 → Motor</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-case">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <div class="trouble-case-title"><i class="fas fa-circle-nodes" style="color:var(--gold)"></i><span style="color:var(--gold)">KASUS 2:</span> Relay/Kontaktor Tidak Aktif (Tidak Bunyi Klik)</div>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-step">
+            <div class="step-num-badge">1</div>
+            <div class="step-content">
+              <h5>Cek Tegangan Coil A1-A2</h5>
+              <p>Ukur tegangan antara A1 dan A2. Jika tidak ada tegangan, cari jalur yang putus di rangkaian kontrol.</p>
+              <div><span class="step-pin">A1 – A2 = 220V/24V?</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">2</div>
+            <div class="step-content">
+              <h5>Ukur Resistansi Coil</h5>
+              <p>Lepas tegangan, ukur ohm coil A1-A2. Nilai normal 100-1000 Ohm. Jika terbuka (OL) = coil putus/terbakar.</p>
+              <div><span class="step-pin">Resistance A1–A2</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">3</div>
+            <div class="step-content">
+              <h5>Cek Kontak NC pada Jalur Kontrol</h5>
+              <p>Telusuri jalur kontrol. Cek semua kontak NC (STOP, Overload 95-96, E-Stop) – semuanya harus tertutup.</p>
+              <div><span class="step-pin">11-12 | 95-96 | E-Stop</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-case">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <div class="trouble-case-title"><i class="fas fa-temperature-high" style="color:var(--orange)"></i><span style="color:var(--orange)">KASUS 3:</span> Overload Terus Trip (95-96 Selalu Terbuka)</div>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-step">
+            <div class="step-num-badge">1</div>
+            <div class="step-content">
+              <h5>Cek Setting Ampere Overload</h5>
+              <p>Sesuaikan dial setting overload dengan arus nominal (FLA) motor yang tertera di nameplate.</p>
+              <div><span class="step-pin">FLA = Volt x 1.73 x kW / (V x eff x pf)</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">2</div>
+            <div class="step-content">
+              <h5>Ukur Arus Motor dengan Tang Ampere</h5>
+              <p>Ukur arus di T1, T2, T3 saat motor jalan. Jika melebihi FLA x 1.25, beban motor terlalu berat.</p>
+              <div><span class="step-pin">T1 T2 T3 – Clamp Meter</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">3</div>
+            <div class="step-content">
+              <h5>Periksa Kondisi Motor</h5>
+              <p>Cek winding motor (megger test). Periksa bearing. Kurangi beban mekanik yang terhubung ke motor.</p>
+              <div><span class="step-pin">Megger test > 1 MΩ</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-case">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <div class="trouble-case-title"><i class="fas fa-star" style="color:var(--cyan)"></i><span style="color:var(--cyan)">KASUS 4:</span> Star-Delta – Motor Star Tidak Beralih ke Delta</div>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-step">
+            <div class="step-num-badge">1</div>
+            <div class="step-content">
+              <h5>Cek Timer TON – Terminal 15-16</h5>
+              <p>Verifikasi timer mendapat tegangan A1-A2. Cek apakah kontak 15-16 menutup setelah delay.</p>
+              <div><span class="step-pin">Timer 15-16 (NO-T)</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">2</div>
+            <div class="step-content">
+              <h5>Cek Interlock NC Star di Jalur Delta</h5>
+              <p>Kontak NC Star harus menutup dulu sebelum Delta ON. Cek urutan waktu pemutusan star ke delta.</p>
+              <div><span class="step-pin">NC Star → Delta Coil A1-A2</span></div>
+            </div>
+          </div>
+          <div class="trouble-step">
+            <div class="step-num-badge">3</div>
+            <div class="step-content">
+              <h5>Cek Coil Kontaktor Delta</h5>
+              <p>Ukur tegangan A1-A2 Delta kontaktor saat timer selesai. Ukur resistansi coil Delta.</p>
+              <div><span class="step-pin">Delta A1-A2 | 11-12</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="site-footer">
+      <div class="footer-brand"><i class="fas fa-ship"></i> MARINE ELECTRICAL TRAINING SYSTEM</div>
+      <p style="color:var(--text2);margin:8px 0;font-size:0.9rem">Rafael Sukirno, CE &nbsp;|&nbsp; POLTEKPEL Surabaya &nbsp;|&nbsp; Universitas Hang Tuah</p>
+      <div class="footer-copy">Standar IEC 60947 &bull; IEC 60446 &bull; SOLAS &bull; IMO &copy; 2026</div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main-wrap -->
+
+<!-- ─── MODAL ──────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Detail Terminal</div>
+      <button class="modal-close" onclick="closeModalNow()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── PAGE NAVIGATION ─────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  
+  document.querySelectorAll('.sidebar-item').forEach(s => {
+    if (s.getAttribute('onclick') && s.getAttribute('onclick').includes("'" + id + "'")) s.classList.add('active');
+  });
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMobile() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ─── DARK/LIGHT MODE ──────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeBtn').innerHTML = isDark
+    ? '<i class="fas fa-moon"></i>'
+    : '<i class="fas fa-sun"></i>';
+}
+
+// ─── RELAY SIMULATION ─────────────────────────────────
+let relayOn = false;
+function startRelay() {
+  relayOn = true;
+  const nodes = ['sn-power','sn-stop','sn-start','sn-coil','sn-contactor','sn-motor'];
+  const arrows = ['sa1','sa2','sa3','sa4','sa5'];
+  nodes.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (id === 'sn-coil') el.classList.add('coil-active');
+        else el.classList.add('active');
+      }
+    }, i * 300);
+  });
+  arrows.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+    }, i * 300 + 200);
+  });
+  setTimeout(() => {
+    document.getElementById('relayStatus').style.background = 'rgba(0,232,122,0.1)';
+    document.getElementById('statusDot').classList.add('on');
+    document.getElementById('statusText').textContent = 'Motor RUNNING – Self holding aktif (33-34 closed)';
+  }, 1800);
+}
+function stopRelay() {
+  relayOn = false;
+  ['sn-power','sn-stop','sn-start','sn-coil','sn-contactor','sn-motor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('active'); el.classList.remove('coil-active'); }
+  });
+  ['sa1','sa2','sa3','sa4','sa5'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById('relayStatus').style.background = '';
+  document.getElementById('statusDot').classList.remove('on');
+  document.getElementById('statusText').textContent = 'Motor STOP – Tekan START untuk mengaktifkan';
+}
+
+// ─── FLOW / STARTER SIM ───────────────────────────────
+let flowTimer;
+function runFlow() {
+  resetFlow();
+  const steps = document.querySelectorAll('.flow-step');
+  steps.forEach((step, i) => {
+    setTimeout(() => {
+      step.classList.add('lit');
+    }, i * 700);
+  });
+}
+function resetFlow() {
+  document.querySelectorAll('.flow-step').forEach(s => s.classList.remove('lit'));
+}
+
+// ─── PLC SIMULATION ───────────────────────────────────
+const plcState = { I0_0:false, I0_1:true, I0_2:true, I0_3:true, I0_4:false };
+let motorRunning = false;
+
+function plcToggle(addr) {
+  plcState[addr] = !plcState[addr];
+  const led = document.getElementById('led-' + addr);
+  
+  // Special logic: I0.1, I0.2, I0.3 are NC (green when high)
+  if (['I0_1','I0_2','I0_3'].includes(addr)) {
+    led.className = 'plc-led ' + (plcState[addr] ? 'on-green' : '');
+  } else {
+    led.className = 'plc-led ' + (plcState[addr] ? 'on-green' : '');
+  }
+  
+  evaluatePLC();
+}
+
+function evaluatePLC() {
+  // Motor runs if: START pressed (I0_0) AND STOP ok (I0_1) AND OL ok (I0_2) AND ESTOP ok (I0_3)
+  // or motor already running (self hold Q0_0) AND safety ok
+  const safetyOk = plcState.I0_1 && plcState.I0_2 && plcState.I0_3;
+  const newMotorState = (plcState.I0_0 || motorRunning) && safetyOk;
+  
+  if (!safetyOk) motorRunning = false;
+  else if (plcState.I0_0) motorRunning = true;
+  
+  // If START momentary – reset after brief press (simulate momentary)
+  if (plcState.I0_0) {
+    setTimeout(() => {
+      plcState.I0_0 = false;
+      document.getElementById('led-I0_0').className = 'plc-led';
+    }, 600);
+  }
+  
+  const running = motorRunning;
+  setLED('Q0_0', running, 'green');
+  setLED('Q0_2', running, 'green');
+  setLED('Q0_4', running, 'green');
+  
+  // Alarm if overload trips
+  const overloadTrip = !plcState.I0_2;
+  setLED('Q0_1', overloadTrip, 'red');
+  setLED('Q0_3', overloadTrip || !safetyOk, 'red');
+  
+  const dot = document.getElementById('plcDot');
+  const txt = document.getElementById('plcStatusText');
+  const status = document.getElementById('plcStatus');
+  
+  if (!safetyOk) {
+    dot.className = 'status-dot on-red'; dot.style.background = 'var(--red)'; dot.style.boxShadow = '0 0 10px var(--red)';
+    txt.textContent = 'FAULT – Periksa: ' + (!plcState.I0_1?'STOP aktif ':'')+(!plcState.I0_2?'Overload trip ':'')+(!plcState.I0_3?'E-Stop aktif ':'');
+    status.style.background = 'rgba(255,77,109,0.1)';
+  } else if (running) {
+    dot.className = 'status-dot on'; dot.style.background = 'var(--green)'; dot.style.boxShadow = '0 0 10px var(--green)';
+    txt.textContent = 'Motor RUNNING – Q0.0=1 | Q0.2=1 (Lampu Hijau ON)';
+    status.style.background = 'rgba(0,232,122,0.1)';
+  } else {
+    dot.className = 'status-dot'; dot.style.background = ''; dot.style.boxShadow = '';
+    txt.textContent = 'Motor STOP – Klik I0.0 untuk START';
+    status.style.background = '';
+  }
+}
+
+function setLED(id, on, color) {
+  const el = document.getElementById('led-' + id);
+  if (!el) return;
+  el.className = 'plc-led' + (on ? (' on-'+color) : '');
+}
+
+// ─── TROUBLESHOOTING TOGGLE ─────────────────────────────
+function toggleTrouble(header) {
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('i.fas.fa-chevron-down, i.fas.fa-chevron-up');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (icon) icon.className = isOpen ? 'fas fa-chevron-down' : 'fas fa-chevron-up';
+}
+
+// ─── MODAL DATA ──────────────────────────────────────────
+const modalData = {
+  'no1314': {
+    title: 'Terminal NO – 13 / 14',
+    pins: [
+      { num: '13', desc: 'Titik masuk – sisi umum (Common)', type: 'type-no' },
+      { num: '14', desc: 'Titik keluar – tersambung saat coil aktif', type: 'type-no' }
+    ],
+    note: 'NO (Normally Open): Kontak dalam posisi TERBUKA saat tidak ada daya di coil. Menutup saat coil A1-A2 mendapat tegangan. Digunakan untuk: rangkaian START, self holding, sinyal running.'
+  },
+  'nc1112': {
+    title: 'Terminal NC – 11 / 12',
+    pins: [
+      { num: '11', desc: 'Titik masuk – sisi umum (Common)', type: 'type-nc' },
+      { num: '12', desc: 'Titik keluar – tersambung saat TIDAK ada coil', type: 'type-nc' }
+    ],
+    note: 'NC (Normally Closed): Kontak TERTUTUP saat tidak ada daya. Terbuka saat coil aktif. Digunakan untuk: rangkaian STOP, interlock, proteksi fail-safe.'
+  },
+  'aux3334': {
+    title: 'Auxiliary NO – 33 / 34',
+    pins: [
+      { num: '33', desc: 'Auxiliary contact – sisi masuk', type: 'type-no' },
+      { num: '34', desc: 'Auxiliary contact – sisi keluar (NO)', type: 'type-no' }
+    ],
+    note: 'Kontak bantu NO. Digunakan untuk Self Holding / Latching: kontak ini dipasang paralel dengan tombol START sehingga motor tetap jalan setelah START dilepas.'
+  },
+  'aux2122': {
+    title: 'Auxiliary NC – 21 / 22',
+    pins: [
+      { num: '21', desc: 'Auxiliary contact – sisi masuk', type: 'type-nc' },
+      { num: '22', desc: 'Auxiliary contact – sisi keluar (NC)', type: 'type-nc' }
+    ],
+    note: 'Kontak bantu NC. Digunakan untuk interlock antara dua kontaktor (misal: Star-Delta, Forward-Reverse). Mencegah dua kontaktor aktif bersamaan.'
+  },
+  'coil': {
+    title: 'Coil Kontaktor – A1 / A2',
+    pins: [
+      { num: 'A1', desc: 'Positif / Line (tegangan masuk ke coil)', type: 'type-coil' },
+      { num: 'A2', desc: 'Negatif / Neutral (kembali ke sumber)', type: 'type-coil' }
+    ],
+    note: 'Coil adalah kumparan elektromagnetik. Tegangan standar: 220V AC, 110V AC, atau 24V DC tergantung spesifikasi kontaktor. Saat A1-A2 mendapat tegangan sesuai rating, inti besi tertarik dan semua kontak berubah posisi.'
+  },
+  'overload': {
+    title: 'Overload Relay Terminal',
+    pins: [
+      { num: '95 – 96', desc: 'Trip Contact (NC) – Terbuka saat overload trip', type: 'type-trip' },
+      { num: '97 – 98', desc: 'Alarm Contact (NO) – Menutup saat overload trip', type: 'type-no' }
+    ],
+    note: 'Overload trip bila arus melebihi setting FLA. Untuk reset: tekan tombol RESET di badan overload. Selalu cek penyebab sebelum reset. Setting = 1.0–1.25 x FLA motor.'
+  },
+  'timer': {
+    title: 'Timer Relay – TON (On-Delay)',
+    pins: [
+      { num: 'A1 – A2', desc: 'Coil / sumber daya timer', type: 'type-coil' },
+      { num: '15 – 16', desc: 'NO dengan tunda waktu (menutup setelah delay)', type: 'type-no' },
+      { num: '15 – 18', desc: 'NC dengan tunda waktu (terbuka setelah delay)', type: 'type-nc' }
+    ],
+    note: 'Timer TON (Time On-Delay): Setelah coil mendapat tegangan, timer mulai menghitung. Kontak 15-16 menutup SETELAH waktu tunda (misal 5-10 detik). Digunakan di Star-Delta untuk switching Star ke Delta.'
+  },
+  'power': {
+    title: 'Power Terminal – L1L2L3 / T1T2T3',
+    pins: [
+      { num: 'L1', desc: 'Phase R – Input dari supply 3-phase', type: 'type-power' },
+      { num: 'L2', desc: 'Phase S – Input dari supply 3-phase', type: 'type-power' },
+      { num: 'L3', desc: 'Phase T – Input dari supply 3-phase', type: 'type-power' },
+      { num: 'T1', desc: 'Phase R – Output ke terminal motor U1', type: 'type-power' },
+      { num: 'T2', desc: 'Phase S – Output ke terminal motor V1', type: 'type-power' },
+      { num: 'T3', desc: 'Phase T – Output ke terminal motor W1', type: 'type-power' }
+    ],
+    note: 'Terminal daya utama 3-phase. L1-L2-L3 adalah sisi sumber (dari MCB/MCCB). T1-T2-T3 adalah sisi beban (ke motor atau ke overload relay). Tegangan: 380V atau 440V AC 3-phase di kapal.'
+  },
+  'pushbutton': {
+    title: 'Push Button Terminal',
+    pins: [
+      { num: '1 – 2', desc: 'NC – STOP button (warna merah)', type: 'type-nc' },
+      { num: '3 – 4', desc: 'NC – NC contact tambahan', type: 'type-nc' },
+      { num: '13 – 14', desc: 'NO – START button (warna hijau)', type: 'type-no' }
+    ],
+    note: 'Penomoran IEC untuk push button: NO menggunakan 1x-3x (ganjil-genap), NC menggunakan 2x-4x. Tombol STOP wajib NC untuk prinsip fail-safe: jika kabel STOP putus, motor otomatis berhenti.'
+  },
+  'kontakutama': {
+    title: 'Kontak Utama Kontaktor IEC',
+    pins: [
+      { num: '13 – 14', desc: 'NO – Menutup saat coil aktif', type: 'type-no' },
+      { num: '11 – 12', desc: 'NC – Terbuka saat coil aktif', type: 'type-nc' },
+      { num: '33 – 34', desc: 'Auxiliary NO – Self holding', type: 'type-no' },
+      { num: '21 – 22', desc: 'Auxiliary NC – Interlock', type: 'type-nc' }
+    ],
+    note: 'Standar penomoran IEC 60947-4-1. Angka puluhan menunjukkan jenis: 1x = NO, 2x = NC, 3x-4x = auxiliary. Digit terakhir ganjil = common, genap = kontak.'
+  },
+  'main-contactor': {
+    title: 'Main Contactor – Star-Delta',
+    pins: [
+      { num: 'A1 – A2', desc: 'Coil – tetap ON selama motor jalan', type: 'type-coil' },
+      { num: '13 – 14', desc: 'Kontak bantu untuk signal running', type: 'type-no' },
+      { num: 'L1-T1, L2-T2, L3-T3', desc: 'Power terminal ke motor', type: 'type-power' }
+    ],
+    note: 'Main contactor (KM1) di Star-Delta selalu ON mulai dari start hingga motor berhenti. Kontaktor Star (KMY) dan Delta (KMD) bergantian aktif sesuai timer.'
+  },
+  'star-contactor': {
+    title: 'Star Contactor – Star-Delta',
+    pins: [
+      { num: 'A1 – A2', desc: 'Coil – aktif saat starting (star)', type: 'type-coil' },
+      { num: '13 – 14', desc: 'Interlock ke timer', type: 'type-no' },
+      { num: '21 – 22', desc: 'NC – Interlock ke Delta coil', type: 'type-nc' }
+    ],
+    note: 'Star kontaktor menghubungkan ujung belitan motor ke titik netral (bintang). Tegangan motor = 380/√3 = 220V. Arus start berkurang 1/3 dibanding DOL. Mati setelah timer selesai.'
+  },
+  'delta-contactor': {
+    title: 'Delta Contactor – Star-Delta',
+    pins: [
+      { num: 'A1 – A2', desc: 'Coil – aktif setelah delay timer', type: 'type-coil' },
+      { num: '21 – 22', desc: 'NC – Interlock ke Star coil', type: 'type-nc' },
+      { num: 'L-T', desc: 'Power: menghubung ujung-ujung belitan segitiga', type: 'type-power' }
+    ],
+    note: 'Delta kontaktor menghubungkan belitan motor dalam konfigurasi segitiga. Motor menerima tegangan penuh 380V. Harus ada interlock NC dengan Star untuk mencegah short circuit.'
+  },
+  'interlock': {
+    title: 'Interlock System',
+    pins: [
+      { num: '21 – 22', desc: 'NC Aux – interlock antar kontaktor', type: 'type-nc' },
+      { num: 'Urutan', desc: 'KM-Star NC → KM-Delta coil', type: 'type-nc' }
+    ],
+    note: 'Interlock mencegah Star dan Delta ON bersamaan (short circuit). Kontak NC Star (21-22) dipasang seri di jalur coil Delta. Sebaliknya, NC Delta di jalur coil Star. Ini wajib dilakukan di semua Star-Delta starter.'
+  },
+  'grounding': {
+    title: 'Grounding / Earthing',
+    pins: [
+      { num: 'PE', desc: 'Protective Earth – hijau/kuning', type: 'type-no' },
+      { num: 'Busbar', desc: 'Ground busbar panel', type: 'type-power' }
+    ],
+    note: 'Grounding wajib sesuai IEC 60364. Di kapal: badan motor, rangka panel, dan semua peralatan logam harus terhubung ke PE. Tegangan sentuh aman < 50V AC. Grounding mengarahkan arus bocor ke bumi, melindungi personel.'
+  },
+  'emergency-stop': {
+    title: 'Emergency Stop (E-Stop)',
+    pins: [
+      { num: '11 – 12', desc: 'NC – Kontak utama E-Stop', type: 'type-nc' },
+      { num: '21 – 22', desc: 'NC – Kontak bantu (bila ada)', type: 'type-nc' }
+    ],
+    note: 'E-Stop harus menggunakan kontak NC (Fail-Safe). Warna: tombol merah, body/ring kuning (ISO 13850). Di kapal: dipasang di engine room, ECR, dan bridge. Setelah tekan E-Stop, wajib reset manual (tidak boleh auto-reset).'
+  },
+  'low-oil': {
+    title: 'Low Oil Pressure Trip',
+    pins: [
+      { num: 'PNO/PNC', desc: 'Pressure switch kontak NC', type: 'type-nc' },
+      { num: 'I0.x', desc: 'Input PLC – monitoring tekanan', type: 'type-no' }
+    ],
+    note: 'Tekanan oli normal main engine: 3-5 bar. Setting trip biasanya 2.0-2.5 bar. Jika tekanan di bawah setpoint, pressure switch NC terbuka → sinyal ke PLC → mesin tidak dapat distart atau shutdown otomatis.'
+  },
+  'high-temp': {
+    title: 'High Temperature Protection',
+    pins: [
+      { num: 'Thermostat', desc: 'NC – membuka saat suhu tinggi', type: 'type-nc' },
+      { num: 'PT100', desc: 'Analog signal 0-100°C ke PLC', type: 'type-no' }
+    ],
+    note: 'Bearing motor normal: <70°C. Warning: 80°C. Shutdown: 100°C. Untuk motor besar menggunakan PTC thermistor (terpasang di belitan) atau RTD PT100. Sinyal dikirim ke PLC atau relay proteksi.'
+  },
+  'cable-brown': { title:'Kabel Coklat – AC Phase L1', pins:[{num:'Coklat',desc:'Phase L1 / Line – arus hidup',type:'type-power'}], note:'Standar IEC 60446 / CENELEC HD 308. Sebelum 2004: warna merah (UK) atau coklat (EU). Selalu gunakan voltmeter sebelum menyentuh kabel coklat.' },
+  'cable-black': { title:'Kabel Hitam – AC Phase L2', pins:[{num:'Hitam',desc:'Phase L2 – arus hidup',type:'type-power'}], note:'Standar IEC 60446. Hitam di AC = Phase L2 (berbeda dengan DC di mana hitam = negatif). Perhatikan konteks AC/DC.' },
+  'cable-grey': { title:'Kabel Abu-abu – AC Phase L3', pins:[{num:'Abu-abu',desc:'Phase L3 – arus hidup',type:'type-power'}], note:'Standar IEC 60446 / CENELEC. Phase L3 menggunakan abu-abu (grey). Di sistem 1-phase hanya ada L1 (coklat).' },
+  'cable-blue': { title:'Kabel Biru – Neutral', pins:[{num:'Biru',desc:'Neutral (N) – titik tengah transformator',type:'type-no'}], note:'Biru = Neutral di sistem AC IEC. Tegangan terhadap ground ≈0V nominal. Di atas kapal, neutral bisa di-isolasi (IT system) atau di-ground (TN system).' },
+  'cable-green': { title:'Kabel Hijau/Kuning – PE (Ground)', pins:[{num:'Hijau/Kuning',desc:'Protective Earth – wajib IEC 60446',type:'type-no'}], note:'WAJIB: Kabel hijau-kuning HANYA boleh digunakan untuk PE (grounding). Tidak boleh digunakan untuk tujuan lain. Di kapal: terhubung ke hull earth.' },
+  'cable-red': { title:'Kabel Merah – DC Positif', pins:[{num:'Merah',desc:'Positif (+) – DC supply',type:'type-power'}], note:'Merah = positif DC. Tegangan: 12V, 24V, 48V, 110V DC tergantung sistem. Di kapal: 24V DC umum untuk sistem kontrol, alarm, dan navigasi.' },
+  'cable-blackdc': { title:'Kabel Hitam – DC Negatif', pins:[{num:'Hitam',desc:'Negatif (–) – DC return',type:'type-nc'}], note:'Hitam = negatif/return DC. Perhatikan: hitam di AC = Phase L2, di DC = negatif. Selalu cek dengan multimeter sebelum bekerja.' },
+  'cable-sensor-brown': { title:'Kabel Sensor Coklat – VCC', pins:[{num:'Coklat',desc:'+VCC – supply positif sensor (10-30V DC)',type:'type-power'}], note:'Pada sensor proximity, photoelectric, dan level – coklat selalu +VCC. Arus supply biasanya < 200mA.' },
+  'cable-sensor-blue': { title:'Kabel Sensor Biru – GND', pins:[{num:'Biru',desc:'– GND – referensi negatif sensor',type:'type-nc'}], note:'Biru = negatif/ground pada kabel sensor 3-wire dan 4-wire. Harus terhubung ke common negativ power supply.' },
+  'cable-sensor-black': { title:'Kabel Sensor Hitam – Signal', pins:[{num:'Hitam',desc:'Output signal – PNP (source) atau NPN (sink)',type:'type-no'}], note:'PNP: output high (+VCC) saat aktif. NPN: output low (GND) saat aktif. Sambungkan ke input PLC sesuai jenis PLC (source/sink).' },
+  'cable-sensor-white': { title:'Kabel Sensor Putih – Signal 2', pins:[{num:'Putih',desc:'Output 2 – pada sensor 4-wire (biasanya NC output)',type:'type-nc'}], note:'Pada sensor 4-wire: hitam = output NO, putih = output NC. Atau: hitam = PNP output, putih = NPN output.' }
+};
+
+function openModal(key) {
+  const data = modalData[key];
+  if (!data) return;
+  
+  document.getElementById('modalTitle').textContent = data.title;
+  
+  let pinsHTML = '<div class="modal-pin-list">';
+  data.pins.forEach(p => {
+    pinsHTML += `<div class="modal-pin-item">
+      <span class="modal-pin-num">${p.num}</span>
+      <span class="modal-pin-desc">${p.desc}</span>
+      <span class="pin-type ${p.type}" style="margin-left:auto">${p.type.replace('type-','').toUpperCase()}</span>
+    </div>`;
+  });
+  pinsHTML += '</div>';
+  
+  if (data.note) {
+    pinsHTML += `<div class="modal-note"><i class="fas fa-info-circle" style="color:var(--gold);margin-right:8px"></i>${data.note}</div>`;
+  }
+  
+  document.getElementById('modalBody').innerHTML = pinsHTML;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalNow();
+}
+function closeModalNow() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// Keyboard close
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalNow(); });
+</script>
+</body>
+</html>
